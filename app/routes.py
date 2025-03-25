@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, abort
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from . import db, limiter
 from .models import User, Ticket, Message
 from .forms import LoginForm, RegistrationForm, TicketForm, MessageForm
+from functools import wraps
 import os
 
 main = Blueprint('main', __name__)
@@ -64,3 +65,23 @@ def generate_ticket_number(ticket):
     sequence = 1 if not last_ticket else int(last_ticket.number.split('-')[-1]) + 1
     ticket.number = f"TICKET-{month_year}-{sequence:04d}"
     db.session.commit()
+
+def role_required(role):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.is_authenticated or current_user.role != role:
+                abort(403)
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+def permission_required(permission):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.can(permission):
+                abort(403)
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
