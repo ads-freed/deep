@@ -36,3 +36,25 @@ ticketsystem/
 ├── Dockerfile
 └── nginx.conf
 ```
+
+
+
+```
+To complete the setup:
+
+Make setup.sh executable:
+
+bash
+Copy
+chmod +x setup.sh
+Run the setup:
+
+bash
+Copy
+./setup.sh
+Start with Docker:
+
+bash
+Copy
+docker-compose up --build
+```
