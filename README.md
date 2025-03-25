@@ -37,6 +37,46 @@ ticketsystem/
 └── nginx.conf
 ```
 
+````
+To use this system:
+
+Create the required directories:
+
+bash
+Copy
+mkdir -p app/admin templates/{auth,dashboard,tickets} static/{css,js} uploads logs
+Set up environment:
+
+bash
+Copy
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+Start with Docker:
+
+bash
+Copy
+docker-compose up --build
+Run database migrations:
+
+bash
+Copy
+flask db init
+flask db migrate
+flask db upgrade
+The system will be available at http://localhost with:
+
+Admin user: Create first user and update role to 'admin' in database
+
+Real-time updates
+
+File attachments
+
+Ticket management
+
+Private messaging
+```
+
 
 
 ```
