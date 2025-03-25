@@ -2,6 +2,30 @@ from datetime import datetime
 from app import db
 from app.models import Ticket
 import os
+import bleach
+from bs4 import BeautifulSoup
+
+allowed_tags = bleach.ALLOWED_TAGS + [
+    'h1', 'h2', 'h3', 'p', 'span', 'div', 'br', 'pre', 'code',
+    'ul', 'ol', 'li', 'strong', 'em', 'u', 'img'
+]
+
+allowed_attributes = {
+    'img': ['src', 'alt', 'title'],
+    'a': ['href', 'title']
+}
+
+def sanitize_html(content):
+    # Clean HTML content
+    cleaned = bleach.clean(content, tags=allowed_tags, attributes=allowed_attributes)
+    
+    # Sanitize image sources
+    soup = BeautifulSoup(cleaned, 'html.parser')
+    for img in soup.find_all('img'):
+        if not img['src'].startswith(('http://', 'https://')):
+            img.decompose()
+    
+    return str(soup)
 
 def generate_ticket_number(ticket):
     now = datetime.now()
